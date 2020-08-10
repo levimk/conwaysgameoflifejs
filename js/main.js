@@ -1,3 +1,5 @@
+import Cell from './Cell';
+
 /*
 Concepts:
 - Environment (grid)
@@ -11,47 +13,44 @@ class Timer {}
 
 // Divide the grid into square units
 // Rounding -> floor(), leave a bezel
-class Grid {}
-
-// Cells
-class Cell {
-  // All cells have an (x, y) location
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.alive = false;
-    this.neighbours = this.getNeighbours();
+class Grid {
+  constructor() {
+    this.cells = new Set();
   }
 
-  isAlive() {
-    return this.alive;
+  addCell(x, y) {
+    this.cells.add(`${x},${y}`);
   }
 
-  kill() {
-    this.alive = false;
+  killCell(x, y) {
+    this.cells.delete(`${x},${y}`);
   }
 
-  spawn() {
-    this.alive = true;
+  isCellSolitary(cell) {
+    return cell.neigbourCount <= 1;
   }
 
-  getNeighbours() {
-    const neighbours = [];
+  isCellCrowded(cell) {
+    return cell.neigbourCount >= 4;
+  }
 
-    // Why not hardcode? May change cell shapes late,
-    // which would mean different number of neighbours
-    const coords = [-1, 0, 1];
+  surviveOrKill(x, y) {
+    const cell = new Cell(x, y, this.cells);
 
-    // Create neighbours
-    coords.forEach(x => {
-      coords.forEach(y => {
-        neighbours.push([this.x + x, this.y + y]);
-      })
+    const crowded = this.isCellCrowded(cell);
+    const solitary = this.isCellSolitary(cell);
+
+    if (crowded || solitary) {
+      this.killCell(cell);
+    }
+  }
+
+  cull() {
+    this.cells.forEach(cellStr => {
+      const [x, y] = cellStr.split(',')
+        .map(n => Number.parseInt(n));
+      this.surviveOrKill(x, y);
     })
-
-    // Remove this cell
-    neighbours.splice(4, 1);
-
-    return neighbours;
   }
 }
+
