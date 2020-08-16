@@ -28,13 +28,21 @@
   <h1>Conway's Game of Life</h1>
   <h2>Simple JavaScript edition</h2>
   <div id="container">
-    <canvas id="grid">
+    <canvas id="grid" width="400" height="400">
 
     </canvas>
+    <button id="play">
+      Play
+    </button>
   </div>
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/plugins.js"></script>
-  <script src="js/main.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+  <script>
+    loadScript('./js/grid.js', () => {
+      console.log('initGrid');
+    });
+  </script>
 </body>
 
 </html>
